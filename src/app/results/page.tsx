@@ -22,16 +22,18 @@ export default function ResultsPage() {
   const sorted = [...results].sort((a, b) => b.votes - a.votes);
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10">
-      <h1 className="text-2xl font-bold text-white text-center mb-8">Live Results</h1>
+    <main className="min-h-screen bg-slate-950 px-4 sm:px-6 py-8 sm:py-10">
+      <h1 className="text-xl sm:text-2xl font-bold text-white text-center mb-6 sm:mb-8">
+        Live Results
+      </h1>
       <div className="max-w-md mx-auto space-y-4">
         {sorted.map((r) => {
           const pct = total ? Math.round((r.votes / total) * 100) : 0;
           return (
             <div key={r.id}>
-              <div className="flex justify-between text-slate-200 mb-1">
-                <span>{r.name}</span>
-                <span>
+              <div className="flex flex-wrap justify-between gap-x-2 text-slate-200 mb-1 text-sm sm:text-base">
+                <span className="break-words">{r.name}</span>
+                <span className="whitespace-nowrap">
                   {r.votes} ({pct}%)
                 </span>
               </div>

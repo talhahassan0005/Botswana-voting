@@ -76,14 +76,16 @@ export default function VotePage() {
   if (step === "intro") {
     return (
       <Center>
-        <h1 className="text-xl sm:text-2xl font-bold text-white leading-snug max-w-md">
+        <h1 className="text-lg sm:text-2xl font-bold text-white leading-snug max-w-sm sm:max-w-md break-words">
           {pollTitle}
         </h1>
-        <p className="text-slate-300 mt-3 max-w-md">{pollSubtitle}</p>
+        <p className="text-slate-300 mt-3 max-w-sm sm:max-w-md text-sm sm:text-base">
+          {pollSubtitle}
+        </p>
         <button
           type="button"
           onClick={() => setStep("instructions")}
-          className="mt-8 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-10 py-3 rounded-xl transition"
+          className="mt-8 w-full max-w-xs bg-indigo-500 hover:bg-indigo-400 text-white font-semibold py-3 rounded-xl transition"
         >
           Next
         </button>
@@ -94,11 +96,13 @@ export default function VotePage() {
   if (step === "instructions") {
     return (
       <Center>
-        <p className="text-slate-100 text-lg max-w-md leading-relaxed">{instructions}</p>
+        <p className="text-slate-100 text-base sm:text-lg max-w-sm sm:max-w-md leading-relaxed">
+          {instructions}
+        </p>
         <button
           type="button"
           onClick={() => setStep("select")}
-          className="mt-8 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-10 py-3 rounded-xl transition"
+          className="mt-8 w-full max-w-xs bg-indigo-500 hover:bg-indigo-400 text-white font-semibold py-3 rounded-xl transition"
         >
           Next
         </button>
@@ -108,8 +112,8 @@ export default function VotePage() {
 
   // step is "select" | "submitting" | "error"
   return (
-    <main className="min-h-screen bg-slate-950 flex flex-col items-center px-4 py-10">
-      <p className="text-slate-400 text-sm mb-8 text-center">
+    <main className="min-h-screen bg-slate-950 flex flex-col items-center px-4 sm:px-6 py-8 sm:py-10">
+      <p className="text-slate-400 text-sm mb-6 sm:mb-8 text-center">
         You can only select one candidate
       </p>
 
@@ -119,23 +123,23 @@ export default function VotePage() {
             key={n.id}
             type="button"
             onClick={() => setSelected(n.id)}
-            className={`w-full text-left px-5 py-4 rounded-xl border transition ${
+            className={`w-full text-left px-4 sm:px-5 py-4 rounded-xl border transition ${
               selected === n.id
                 ? "border-indigo-400 bg-indigo-500/20 text-white"
                 : "border-slate-700 bg-slate-900 text-slate-200 hover:border-slate-500"
             }`}
           >
-            <div className="font-semibold">
+            <div className="font-semibold break-words">
               {i + 1}. {n.name}
             </div>
             {n.description && (
-              <div className="text-sm text-slate-400 mt-1">{n.description}</div>
+              <div className="text-sm text-slate-400 mt-1 break-words">{n.description}</div>
             )}
           </button>
         ))}
       </div>
 
-      {step === "error" && <p className="text-red-400 mt-4">{errorMsg}</p>}
+      {step === "error" && <p className="text-red-400 mt-4 text-center">{errorMsg}</p>}
 
       <button
         type="button"
@@ -151,7 +155,7 @@ export default function VotePage() {
 
 function Center({ children }: { children?: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center px-4 text-center">
+    <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center px-4 sm:px-6 py-10 text-center">
       {children}
     </main>
   );

@@ -12,17 +12,23 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen flex-1 flex flex-col items-center justify-center bg-slate-950 px-4 text-center">
-      <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{shortTitle}</h1>
-      <p className="text-slate-400 mb-8">Scan to cast your vote</p>
+    <main className="min-h-screen flex-1 flex flex-col items-center justify-center bg-slate-950 px-4 py-10 text-center">
+      <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 max-w-sm sm:max-w-none">
+        {shortTitle}
+      </h1>
+      <p className="text-slate-400 mb-6 sm:mb-8 text-sm sm:text-base">
+        Scan to cast your vote
+      </p>
 
       {url && (
-        <div className="bg-white p-6 rounded-2xl">
-          <QRCodeSVG value={url} size={240} />
+        <div className="bg-white p-4 sm:p-6 rounded-2xl">
+          <QRCodeSVG value={url} size={512} className="w-44 h-44 sm:w-64 sm:h-64" />
         </div>
       )}
 
-      <p className="text-slate-500 mt-6 text-sm break-all">{url}</p>
+      <p className="text-slate-500 mt-6 text-xs sm:text-sm break-all max-w-xs sm:max-w-sm">
+        {url}
+      </p>
 
       <a
         href="/results"
