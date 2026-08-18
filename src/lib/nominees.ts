@@ -24,5 +24,5 @@ export const nominees: Nominee[] = [
   { id: "kenoiri-japone", name: "Kenoiri Japone" },
   { id: "neelo-oburitse", name: "Neelo Oburitse" },
   { id: "salalema-sebinanyane", name: "Salalema Sebinanyane" },
-  { id: "candidate-5", name: "Name Surname" },
+  { id: "gorata-koboyatshwane", name: "Gorata Koboyatshwane" },
 ];
