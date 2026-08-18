@@ -1,31 +1,36 @@
-import { kv } from "@vercel/kv";
+import clientPromise from "./mongodb";
 
-const hasKv = Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+const DB_NAME = "voting";
+const COLLECTION = "votes";
 
-// In-memory fallback so `next dev` works without a Vercel KV database attached.
-// Votes reset whenever the dev server restarts; not used in production once KV env vars are set.
-const memoryVoters = new Set<string>();
-const memoryVotes = new Map<string, number>();
+type VoteDoc = {
+  voterId: string;
+  nomineeId: string;
+  votedAt: Date;
+};
+
+async function getVotesCollection() {
+  const client = await clientPromise;
+  return client.db(DB_NAME).collection<VoteDoc>(COLLECTION);
+}
 
 export async function hasVoted(voterId: string): Promise<boolean> {
-  if (hasKv) return (await kv.sismember("voters", voterId)) === 1;
-  return memoryVoters.has(voterId);
+  const votes = await getVotesCollection();
+  const existing = await votes.findOne({ voterId });
+  return existing !== null;
 }
 
 export async function recordVote(voterId: string, nomineeId: string): Promise<void> {
-  if (hasKv) {
-    await kv.sadd("voters", voterId);
-    await kv.hincrby("votes", nomineeId, 1);
-    return;
-  }
-  memoryVoters.add(voterId);
-  memoryVotes.set(nomineeId, (memoryVotes.get(nomineeId) ?? 0) + 1);
+  const votes = await getVotesCollection();
+  await votes.insertOne({ voterId, nomineeId, votedAt: new Date() });
 }
 
 export async function getResults(): Promise<Record<string, number>> {
-  if (hasKv) {
-    const votes = await kv.hgetall<Record<string, number>>("votes");
-    return votes ?? {};
-  }
-  return Object.fromEntries(memoryVotes);
+  const votes = await getVotesCollection();
+  const tallies = await votes
+    .aggregate<{ _id: string; count: number }>([
+      { $group: { _id: "$nomineeId", count: { $sum: 1 } } },
+    ])
+    .toArray();
+  return Object.fromEntries(tallies.map((t) => [t._id, t.count]));
 }

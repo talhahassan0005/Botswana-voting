@@ -16,20 +16,23 @@ Edit [src/lib/nominees.ts](src/lib/nominees.ts) — update `pollTitle` and the `
 
 ```bash
 npm install
+cp .env.example .env.local   # then fill in MONGODB_URI
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Votes are stored in memory during local dev (they reset when the server restarts) — no setup needed.
+Open [http://localhost:3000](http://localhost:3000).
+
+## Database
+
+Votes are stored in MongoDB. Set the `MONGODB_URI` environment variable (see `.env.example`) — locally via `.env.local` (git-ignored, never commit real credentials), and in production via your host's environment variable settings.
+
+Each vote is a document in the `voting.votes` collection (`voterId`, `nomineeId`, `votedAt`); results are computed with an aggregation that groups by `nomineeId`.
 
 ## Deploying to Vercel
 
-Votes need a real datastore in production since Vercel's serverless functions don't share memory between invocations. This project uses [Vercel KV](https://vercel.com/docs/storage/vercel-kv) (Upstash Redis):
-
-1. Deploy the project to Vercel.
-2. In the Vercel dashboard, go to **Storage → Create Database → KV** and connect it to this project.
-3. Vercel automatically adds the `KV_REST_API_URL` / `KV_REST_API_TOKEN` env vars — redeploy and votes will persist there.
-
-Without a KV database connected, the app still runs but falls back to the same in-memory store as local dev, so votes won't persist across serverless invocations.
+1. Push this repo to GitHub and import it in Vercel.
+2. In the Vercel project settings, add an environment variable `MONGODB_URI` with your MongoDB connection string.
+3. Deploy.
 
 ## How duplicate-vote prevention works
 
