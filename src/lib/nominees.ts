@@ -8,6 +8,7 @@ export type Nominee = {
 export const shortTitle = "Member Trustee Elections";
 
 // Step 1: intro message shown right after scanning the QR code.
+export const welcomeMessage = "Welcome";
 export const pollTitle =
   "Free Standing Additional Voluntary Contribution Retirement Fund";
 export const pollSubtitle = "Annual General Meeting — Member Trustee Elections";

@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { instructions, nominees, pollSubtitle, pollTitle } from "@/lib/nominees";
+import {
+  instructions,
+  nominees,
+  pollSubtitle,
+  pollTitle,
+  welcomeMessage,
+} from "@/lib/nominees";
 import ConfettiRain from "@/components/ConfettiRain";
 
 type Step =
@@ -82,6 +88,9 @@ export default function VotePage() {
   if (step === "intro") {
     return (
       <Center>
+        <p className="text-indigo-400 uppercase tracking-wide text-sm font-semibold mb-2">
+          {welcomeMessage}
+        </p>
         <h1 className="text-lg sm:text-2xl font-bold text-white leading-snug max-w-sm sm:max-w-md break-words">
           {pollTitle}
         </h1>
