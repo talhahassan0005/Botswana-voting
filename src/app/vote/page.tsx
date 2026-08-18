@@ -69,6 +69,12 @@ export default function VotePage() {
         <ConfettiRain />
         <h1 className="text-2xl font-bold text-white">Thanks for voting! 🎉</h1>
         <p className="text-slate-400 mt-2">Your vote has been recorded.</p>
+        <a
+          href="/"
+          className="mt-8 block w-full max-w-xs text-center bg-indigo-500 hover:bg-indigo-400 text-white font-semibold py-3 rounded-xl transition"
+        >
+          Back to Start
+        </a>
       </Center>
     );
   }

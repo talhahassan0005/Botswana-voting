@@ -26,10 +26,6 @@ export default function Home() {
         </div>
       )}
 
-      <p className="text-slate-500 mt-6 text-xs sm:text-sm break-all max-w-xs sm:max-w-sm">
-        {url}
-      </p>
-
       <a
         href="/results"
         className="mt-10 text-indigo-400 hover:text-indigo-300 text-sm underline"
