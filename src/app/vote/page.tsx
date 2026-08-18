@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { instructions, nominees, pollSubtitle, pollTitle } from "@/lib/nominees";
+import ConfettiRain from "@/components/ConfettiRain";
 
 type Step =
   | "loading"
@@ -65,6 +66,7 @@ export default function VotePage() {
   if (step === "done") {
     return (
       <Center>
+        <ConfettiRain />
         <h1 className="text-2xl font-bold text-white">Thanks for voting! 🎉</h1>
         <p className="text-slate-400 mt-2">Your vote has been recorded.</p>
       </Center>
