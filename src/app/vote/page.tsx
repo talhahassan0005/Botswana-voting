@@ -88,7 +88,7 @@ export default function VotePage() {
   if (step === "intro") {
     return (
       <Center>
-        <p className="text-indigo-400 uppercase tracking-wide text-sm font-semibold mb-2">
+        <p className="text-indigo-400 uppercase tracking-wide text-2xl sm:text-3xl font-bold mb-3">
           {welcomeMessage}
         </p>
         <h1 className="text-lg sm:text-2xl font-bold text-white leading-snug max-w-sm sm:max-w-md break-words">
