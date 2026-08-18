@@ -12,6 +12,8 @@ import ConfettiRain from "@/components/ConfettiRain";
 
 type Step =
   | "loading"
+  | "register"
+  | "waiting"
   | "intro"
   | "instructions"
   | "select"
@@ -20,17 +22,93 @@ type Step =
   | "already"
   | "error";
 
+function formatCountdown(ms: number) {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default function VotePage() {
   const [step, setStep] = useState<Step>("loading");
   const [selected, setSelected] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [name, setName] = useState("");
+  const [registering, setRegistering] = useState(false);
+  const [votingOpensAt, setVotingOpensAt] = useState<number | null>(null);
+  const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
-    fetch("/api/vote")
-      .then((r) => r.json())
-      .then((d) => setStep(d.voted ? "already" : "intro"))
-      .catch(() => setStep("intro"));
+    async function init() {
+      const voteRes = await fetch("/api/vote").then((r) => r.json());
+      if (voteRes.voted) {
+        setStep("already");
+        return;
+      }
+
+      const regRes = await fetch("/api/register").then((r) => r.json());
+      const opensAt = regRes.votingOpensAt ? new Date(regRes.votingOpensAt).getTime() : null;
+
+      if (!regRes.registered) {
+        setStep("register");
+        return;
+      }
+
+      if (opensAt && Date.now() < opensAt) {
+        setVotingOpensAt(opensAt);
+        setStep("waiting");
+      } else {
+        setStep("intro");
+      }
+    }
+    init().catch(() => setStep("register"));
   }, []);
+
+  useEffect(() => {
+    if (step !== "waiting" || votingOpensAt === null) return;
+
+    const tick = () => {
+      const diff = votingOpensAt - Date.now();
+      setRemainingMs(diff);
+      if (diff <= 0) {
+        setStep("intro");
+      }
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [step, votingOpensAt]);
+
+  async function register() {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    setRegistering(true);
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.error ?? "Something went wrong");
+        setStep("error");
+        return;
+      }
+      const opensAt = data.votingOpensAt ? new Date(data.votingOpensAt).getTime() : null;
+      if (opensAt && Date.now() < opensAt) {
+        setVotingOpensAt(opensAt);
+        setStep("waiting");
+      } else {
+        setStep("intro");
+      }
+    } catch {
+      setErrorMsg("Network error, please try again");
+      setStep("error");
+    } finally {
+      setRegistering(false);
+    }
+  }
 
   async function submit() {
     if (!selected) return;
@@ -65,6 +143,50 @@ export default function VotePage() {
       <Center>
         <h1 className="text-2xl font-bold text-white">You&apos;ve already voted</h1>
         <p className="text-slate-400 mt-2">Thanks for participating!</p>
+      </Center>
+    );
+  }
+
+  if (step === "register") {
+    return (
+      <Center>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">Register to vote</h1>
+        <p className="text-slate-400 mt-2 text-sm sm:text-base">
+          Please enter your name to register.
+        </p>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your full name"
+          className="mt-6 w-full max-w-xs bg-slate-900 border border-slate-700 text-white placeholder:text-slate-500 rounded-xl px-4 py-3 text-center focus:outline-none focus:border-indigo-400"
+        />
+        <button
+          type="button"
+          onClick={register}
+          disabled={!name.trim() || registering}
+          className="mt-4 w-full max-w-xs bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-400 text-white font-semibold py-3 rounded-xl transition hover:bg-indigo-400"
+        >
+          {registering ? "Registering…" : "Register"}
+        </button>
+      </Center>
+    );
+  }
+
+  if (step === "waiting") {
+    return (
+      <Center>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">You&apos;re registered!</h1>
+        <p className="text-slate-400 mt-2 text-sm sm:text-base">Voting opens in</p>
+        <p className="text-indigo-400 text-4xl sm:text-5xl font-bold mt-3 tabular-nums">
+          {formatCountdown(remainingMs)}
+        </p>
+        <a
+          href="/registered"
+          className="mt-8 text-indigo-400 hover:text-indigo-300 text-sm underline"
+        >
+          View registered voters
+        </a>
       </Center>
     );
   }

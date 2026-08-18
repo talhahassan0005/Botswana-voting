@@ -1,12 +1,17 @@
 # QR Voting
 
-A tiny event voting system: display the home page on a screen/poster, people scan the QR code, pick a nominee, and submit — one vote per device.
+A tiny event voting system: display the home page on a screen/poster, people scan the QR code, register with their name, wait out the registration window, then pick a nominee and submit — one vote per device.
 
 ## Pages
 
 - `/` — QR code linking to `/vote` (put this on a poster or screen at the event)
-- `/vote` — nominee list, select one and submit
+- `/vote` — register with a name, wait for the registration window to close, then the nominee list, select one and submit
+- `/registered` — live list of registered voter names, auto-refreshes every 4s
 - `/results` — live vote tally, auto-refreshes every 4s
+
+## Registration window
+
+Voting only opens `REGISTRATION_WINDOW_MS` (default: 5 minutes, see [src/lib/store.ts](src/lib/store.ts)) after the very first person registers — this gives everyone time to register before votes start being accepted. The countdown is enforced server-side (`/api/vote` rejects votes before the window closes), not just in the UI.
 
 ## Editing nominees
 
@@ -26,7 +31,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Votes are stored in MongoDB. Set the `MONGODB_URI` environment variable (see `.env.example`) — locally via `.env.local` (git-ignored, never commit real credentials), and in production via your host's environment variable settings.
 
-Each vote is a document in the `voting.votes` collection (`voterId`, `nomineeId`, `votedAt`); results are computed with an aggregation that groups by `nomineeId`.
+Each vote is a document in the `voting.votes` collection (`voterId`, `nomineeId`, `votedAt`); results are computed with an aggregation that groups by `nomineeId`. Registrations live in `voting.registrations` (`voterId`, `name`, `registeredAt`).
 
 ## Deploying to Vercel
 
