@@ -181,12 +181,6 @@ export default function VotePage() {
         <p className="text-indigo-400 text-4xl sm:text-5xl font-bold mt-3 tabular-nums">
           {formatCountdown(remainingMs)}
         </p>
-        <a
-          href="/registered"
-          className="mt-8 text-indigo-400 hover:text-indigo-300 text-sm underline"
-        >
-          View registered voters
-        </a>
       </Center>
     );
   }

@@ -27,20 +27,12 @@ export default function Home() {
         <p className="text-slate-400 text-sm sm:text-base">
           Your vote has already been recorded.
         </p>
-        <div className="mt-10 flex gap-6">
-          <a
-            href="/registered"
-            className="text-indigo-400 hover:text-indigo-300 text-sm underline"
-          >
-            Registered voters
-          </a>
-          <a
-            href="/results"
-            className="text-indigo-400 hover:text-indigo-300 text-sm underline"
-          >
-            View live results
-          </a>
-        </div>
+        <a
+          href="/results"
+          className="mt-10 text-indigo-400 hover:text-indigo-300 text-sm underline"
+        >
+          View live results
+        </a>
       </main>
     );
   }
@@ -60,20 +52,12 @@ export default function Home() {
         </div>
       )}
 
-      <div className="mt-10 flex gap-6">
-        <a
-          href="/registered"
-          className="text-indigo-400 hover:text-indigo-300 text-sm underline"
-        >
-          Registered voters
-        </a>
-        <a
-          href="/results"
-          className="text-indigo-400 hover:text-indigo-300 text-sm underline"
-        >
-          View live results
-        </a>
-      </div>
+      <a
+        href="/results"
+        className="mt-10 text-indigo-400 hover:text-indigo-300 text-sm underline"
+      >
+        View live results
+      </a>
     </main>
   );
 }
